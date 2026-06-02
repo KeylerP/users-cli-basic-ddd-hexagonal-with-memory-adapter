@@ -1,6 +1,7 @@
 package com.jcaa.udec.collections.entrypoint.cli;
 
 import com.jcaa.udec.collections.domain.core.exception.UsuarioInvalidoException;
+import com.jcaa.udec.collections.domain.core.exception.UsuarioNoExisteException;
 import com.jcaa.udec.collections.domain.core.exception.UsuarioYaExisteException;
 import com.jcaa.udec.collections.domain.core.valueobject.Email;
 import com.jcaa.udec.collections.domain.core.valueobject.NombreUsuario;
@@ -8,17 +9,20 @@ import com.jcaa.udec.collections.domain.core.valueobject.Password;
 import com.jcaa.udec.collections.domain.core.valueobject.UsuarioId;
 import com.jcaa.udec.collections.entrypoint.controller.UsuarioControlador;
 import com.jcaa.udec.collections.entrypoint.controller.dto.request.RegistrarUsuarioPeticion;
+import com.jcaa.udec.collections.entrypoint.controller.dto.response.ObtenerUsuarioResponse;
 
 import java.util.Scanner;
 
 public class GuiCli {
     private static final int OPCION_AGREGAR = 1;
+    private static final int OPCION_BUSCAR = 2;
     private static final int OPCION_SALIR = 4;
     private static final String TEXTO_TITULO = "** EJEMPLO DE USO DE LISTAS Y HEXAGONAL **";
     private static final String TITULO_REGISTRO = "** INGRESE LOS DATOS DEL NUEVO USUARIO **";
     private static final String SEPARADOR = "- - - - - - - - - ";
     private static final String OPCIONES = "Opciones:";
     private static final String TEXTO_OPCION_AGREGAR = "1 - Agregar";
+    private static final String TEXTO_OPCION_BUSCAR = "2 - Buscar por Id";
     private static final String TEXTO_OPCION_SALIR = "4 - Salir";
     private static final String TEXTO_SOLICITUD_OPCION = "Ingrese el numero de la opcion: ";
     private static final String SOLICITUD_ID = "ID: ";
@@ -54,7 +58,7 @@ public class GuiCli {
             String valorIngresado = limpiarEntrada(entrada.nextLine());
             try {
                 int opcion = Integer.parseInt(valorIngresado);
-                if (opcion == OPCION_AGREGAR || opcion == OPCION_SALIR) {
+                if (opcion == OPCION_AGREGAR || opcion == OPCION_BUSCAR || opcion == OPCION_SALIR) {
                     return opcion;
                 }
             } catch (NumberFormatException exception) {
@@ -71,9 +75,12 @@ public class GuiCli {
             try {
                 switch (opcion) {
                     case OPCION_AGREGAR -> registrarUsuario();
+                    case OPCION_BUSCAR -> mostrarUsuarioPorId();
                     case OPCION_SALIR -> continuar = false;
                 }
-            } catch (UsuarioInvalidoException | UsuarioYaExisteException exception) {
+            } catch (UsuarioInvalidoException
+                    | UsuarioNoExisteException
+                    | UsuarioYaExisteException exception) {
                 System.out.println(MENSAJE_ERROR + exception.getMessage());
             }
         }
@@ -87,6 +94,7 @@ public class GuiCli {
         System.out.println(OPCIONES);
         System.out.println(SEPARADOR);
         System.out.println(TEXTO_OPCION_AGREGAR);
+        System.out.println(TEXTO_OPCION_BUSCAR);
         System.out.println(TEXTO_OPCION_SALIR);
         System.out.print(TEXTO_SOLICITUD_OPCION);
     }
@@ -94,6 +102,10 @@ public class GuiCli {
     private void registrarUsuario() {
         usuarioControlador.registrar(capturarDatosUsuario());
         System.out.println(MENSAJE_REGISTRO_EXITOSO);
+    }
+
+    private void mostrarUsuarioPorId() {
+        System.out.println(usuarioControlador.obtenerPorId(capturarId()));
     }
 
     private RegistrarUsuarioPeticion capturarDatosUsuario() {

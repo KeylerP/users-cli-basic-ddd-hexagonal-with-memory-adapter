@@ -2,9 +2,11 @@ package com.jcaa.udec.collections.entrypoint.cli;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.jcaa.udec.collections.domain.core.exception.UsuarioYaExisteException;
+import com.jcaa.udec.collections.domain.core.exception.UsuarioNoExisteException;
 import com.jcaa.udec.collections.entrypoint.controller.UsuarioControlador;
 import com.jcaa.udec.collections.entrypoint.controller.dto.request.RegistrarUsuarioPeticion;
+import com.jcaa.udec.collections.entrypoint.controller.dto.response.ObtenerUsuarioResponse;
+import com.jcaa.udec.collections.entrypoint.controller.dto.response.UsuarioResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -23,13 +25,14 @@ class GuiCliTest {
     void deberiaSolicitarOpcionHastaRecibirValorValido() {
         // Arrange
         UsuarioControladorStub controlador = new UsuarioControladorStub();
-        GuiCli guiCli = crearGuiCli(controlador, "texto", "2", "\uFEFF4");
+        GuiCli guiCli = crearGuiCli(controlador, "texto", "3", "5", "\uFEFF2");
 
         // Act
-        String salida = capturarSalida(() -> assertThat(guiCli.obtenerOpcionMenu()).isEqualTo(4));
+        String salida = capturarSalida(() -> assertThat(guiCli.obtenerOpcionMenu()).isEqualTo(2));
 
         // Assert
-        assertThat(salida).contains("Opcion [texto] invalida", "Opcion [2] invalida");
+        assertThat(salida).contains(
+                "Opcion [texto] invalida", "Opcion [3] invalida", "Opcion [5] invalida");
     }
 
     @Test
@@ -71,17 +74,30 @@ class GuiCliTest {
     }
 
     @Test
-    void deberiaInformarErrorCuandoElUsuarioYaExiste() {
+    void deberiaMostrarUsuarioBuscado() {
         // Arrange
         UsuarioControladorStub controlador = new UsuarioControladorStub();
-        controlador.reportarUsuarioDuplicado();
-        GuiCli guiCli = crearGuiCli(controlador, "1", ID, PASSWORD, NOMBRE, EMAIL, "4");
+        GuiCli guiCli = crearGuiCli(controlador, "2", ID, "4");
 
         // Act
         String salida = capturarSalida(guiCli::ejecutarAccion);
 
         // Assert
-        assertThat(salida).contains("ERROR: El usuario ya existe.");
+        assertThat(salida).contains("ID: " + ID, "NOMBRE: " + NOMBRE, "EMAIL: " + EMAIL);
+    }
+
+    @Test
+    void deberiaInformarErrorDelControlador() {
+        // Arrange
+        UsuarioControladorStub controlador = new UsuarioControladorStub();
+        controlador.reportarUsuarioInexistente();
+        GuiCli guiCli = crearGuiCli(controlador, "2", ID, "4");
+
+        // Act
+        String salida = capturarSalida(guiCli::ejecutarAccion);
+
+        // Assert
+        assertThat(salida).contains("ERROR: El usuario no existe.");
     }
 
     private static GuiCli crearGuiCli(UsuarioControlador controlador, String... entradas) {
@@ -101,25 +117,33 @@ class GuiCliTest {
         }
     }
 
+    private static UsuarioResponse crearUsuarioResponse() {
+        return new UsuarioResponse(ID, NOMBRE, EMAIL);
+    }
+
     private static final class UsuarioControladorStub implements UsuarioControlador {
         private final List<RegistrarUsuarioPeticion> peticiones = new ArrayList<>();
-        private boolean usuarioDuplicado;
+        private boolean usuarioInexistente;
 
         @Override
         public void registrar(RegistrarUsuarioPeticion peticion) {
-            if (usuarioDuplicado) {
-                throw new UsuarioYaExisteException();
-            }
             peticiones.add(peticion);
         }
 
+        @Override
+        public ObtenerUsuarioResponse obtenerPorId(String id) {
+            if (usuarioInexistente) {
+                throw new UsuarioNoExisteException();
+            }
+            return new ObtenerUsuarioResponse(crearUsuarioResponse());
+        }
 
         private List<RegistrarUsuarioPeticion> getPeticiones() {
             return List.copyOf(peticiones);
         }
 
-        private void reportarUsuarioDuplicado() {
-            usuarioDuplicado = true;
+        private void reportarUsuarioInexistente() {
+            usuarioInexistente = true;
         }
     }
 }
