@@ -16,6 +16,7 @@ import java.util.Scanner;
 public class GuiCli {
     private static final int OPCION_AGREGAR = 1;
     private static final int OPCION_BUSCAR = 2;
+    private static final int OPCION_MOSTRAR_TODOS = 3;
     private static final int OPCION_SALIR = 4;
     private static final String TEXTO_TITULO = "** EJEMPLO DE USO DE LISTAS Y HEXAGONAL **";
     private static final String TITULO_REGISTRO = "** INGRESE LOS DATOS DEL NUEVO USUARIO **";
@@ -23,6 +24,7 @@ public class GuiCli {
     private static final String OPCIONES = "Opciones:";
     private static final String TEXTO_OPCION_AGREGAR = "1 - Agregar";
     private static final String TEXTO_OPCION_BUSCAR = "2 - Buscar por Id";
+    private static final String TEXTO_OPCION_MOSTRAR_TODOS = "3 - Ver todos";
     private static final String TEXTO_OPCION_SALIR = "4 - Salir";
     private static final String TEXTO_SOLICITUD_OPCION = "Ingrese el numero de la opcion: ";
     private static final String SOLICITUD_ID = "ID: ";
@@ -37,6 +39,7 @@ public class GuiCli {
     private static final String MENSAJE_EMAIL_INVALIDO = "EMAIL INVALIDO: ingrese un correo valido";
     private static final String MENSAJE_ERROR = "ERROR: ";
     private static final String MENSAJE_REGISTRO_EXITOSO = "Usuario registrado correctamente.";
+    private static final String MENSAJE_LISTA_VACIA = "No hay usuarios registrados.";
     private static final String MENSAJE_DESPEDIDA = "Esperamos tu regreso. Bye, Bye";
     private static final String MARCA_ORDEN_BYTES = "\uFEFF";
     private static final String TEXTO_VACIO = "";
@@ -58,7 +61,7 @@ public class GuiCli {
             String valorIngresado = limpiarEntrada(entrada.nextLine());
             try {
                 int opcion = Integer.parseInt(valorIngresado);
-                if (opcion == OPCION_AGREGAR || opcion == OPCION_BUSCAR || opcion == OPCION_SALIR) {
+                if (opcion >= OPCION_AGREGAR && opcion <= OPCION_SALIR) {
                     return opcion;
                 }
             } catch (NumberFormatException exception) {
@@ -76,6 +79,7 @@ public class GuiCli {
                 switch (opcion) {
                     case OPCION_AGREGAR -> registrarUsuario();
                     case OPCION_BUSCAR -> mostrarUsuarioPorId();
+                    case OPCION_MOSTRAR_TODOS -> mostrarTodosLosUsuarios();
                     case OPCION_SALIR -> continuar = false;
                 }
             } catch (UsuarioInvalidoException
@@ -95,6 +99,7 @@ public class GuiCli {
         System.out.println(SEPARADOR);
         System.out.println(TEXTO_OPCION_AGREGAR);
         System.out.println(TEXTO_OPCION_BUSCAR);
+        System.out.println(TEXTO_OPCION_MOSTRAR_TODOS);
         System.out.println(TEXTO_OPCION_SALIR);
         System.out.print(TEXTO_SOLICITUD_OPCION);
     }
@@ -106,6 +111,15 @@ public class GuiCli {
 
     private void mostrarUsuarioPorId() {
         System.out.println(usuarioControlador.obtenerPorId(capturarId()));
+    }
+
+    private void mostrarTodosLosUsuarios() {
+        ObtenerUsuarioResponse response = usuarioControlador.obtenerTodos();
+        if (response.estaVacia()) {
+            System.out.println(MENSAJE_LISTA_VACIA);
+            return;
+        }
+        System.out.println(response);
     }
 
     private RegistrarUsuarioPeticion capturarDatosUsuario() {

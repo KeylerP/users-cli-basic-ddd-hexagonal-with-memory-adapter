@@ -7,4 +7,6 @@ public interface UsuarioControlador {
     void registrar(RegistrarUsuarioPeticion peticion);
 
     ObtenerUsuarioResponse obtenerPorId(String id);
+
+    ObtenerUsuarioResponse obtenerTodos();
 }

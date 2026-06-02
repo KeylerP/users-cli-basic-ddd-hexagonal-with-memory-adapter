@@ -25,14 +25,13 @@ class GuiCliTest {
     void deberiaSolicitarOpcionHastaRecibirValorValido() {
         // Arrange
         UsuarioControladorStub controlador = new UsuarioControladorStub();
-        GuiCli guiCli = crearGuiCli(controlador, "texto", "3", "5", "\uFEFF2");
+        GuiCli guiCli = crearGuiCli(controlador, "texto", "5", "\uFEFF2");
 
         // Act
         String salida = capturarSalida(() -> assertThat(guiCli.obtenerOpcionMenu()).isEqualTo(2));
 
         // Assert
-        assertThat(salida).contains(
-                "Opcion [texto] invalida", "Opcion [3] invalida", "Opcion [5] invalida");
+        assertThat(salida).contains("Opcion [texto] invalida", "Opcion [5] invalida");
     }
 
     @Test
@@ -78,6 +77,33 @@ class GuiCliTest {
         // Arrange
         UsuarioControladorStub controlador = new UsuarioControladorStub();
         GuiCli guiCli = crearGuiCli(controlador, "2", ID, "4");
+
+        // Act
+        String salida = capturarSalida(guiCli::ejecutarAccion);
+
+        // Assert
+        assertThat(salida).contains("ID: " + ID, "NOMBRE: " + NOMBRE, "EMAIL: " + EMAIL);
+    }
+
+    @Test
+    void deberiaInformarCuandoNoHayUsuariosRegistrados() {
+        // Arrange
+        UsuarioControladorStub controlador = new UsuarioControladorStub();
+        GuiCli guiCli = crearGuiCli(controlador, "3", "4");
+
+        // Act
+        String salida = capturarSalida(guiCli::ejecutarAccion);
+
+        // Assert
+        assertThat(salida).contains("No hay usuarios registrados.");
+    }
+
+    @Test
+    void deberiaMostrarTodosLosUsuariosRegistrados() {
+        // Arrange
+        UsuarioControladorStub controlador = new UsuarioControladorStub();
+        controlador.registrar(new RegistrarUsuarioPeticion(ID, PASSWORD, NOMBRE, EMAIL));
+        GuiCli guiCli = crearGuiCli(controlador, "3", "4");
 
         // Act
         String salida = capturarSalida(guiCli::ejecutarAccion);
@@ -135,7 +161,14 @@ class GuiCliTest {
             if (usuarioInexistente) {
                 throw new UsuarioNoExisteException();
             }
-            return new ObtenerUsuarioResponse(crearUsuarioResponse());
+            return new ObtenerUsuarioResponse(List.of(crearUsuarioResponse()));
+        }
+
+        @Override
+        public ObtenerUsuarioResponse obtenerTodos() {
+            return new ObtenerUsuarioResponse(peticiones.stream()
+                    .map(peticion -> crearUsuarioResponse())
+                    .toList());
         }
 
         private List<RegistrarUsuarioPeticion> getPeticiones() {

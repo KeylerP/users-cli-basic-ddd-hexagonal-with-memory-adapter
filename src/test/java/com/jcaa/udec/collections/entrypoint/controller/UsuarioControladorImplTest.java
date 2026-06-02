@@ -61,6 +61,24 @@ class UsuarioControladorImplTest {
                 .contains("ID: " + ID, "PASSWORD: ****", "NOMBRE: " + NOMBRE, "EMAIL: " + EMAIL);
     }
 
+    @Test
+    void deberiaObtenerTodosLosUsuarios() {
+        // Arrange
+        UsuarioControlador controlador =
+                new UsuarioControladorImpl(
+                        new AgregarUsuarioUseCaseStub(), new ObtenerUsuarioUseCaseStub());
+
+        // Act
+        ObtenerUsuarioResponse response = controlador.obtenerTodos();
+
+        // Assert
+        assertThat(response.estaVacia()).isFalse();
+        assertThat(response.usuarios())
+                .singleElement()
+                .extracting(usuario -> usuario.id(), usuario -> usuario.nombre(), usuario -> usuario.email())
+                .containsExactly(ID, NOMBRE, EMAIL);
+    }
+
     private static Usuario crearUsuario() {
         return new Usuario(ID, PASSWORD, NOMBRE, EMAIL);
     }

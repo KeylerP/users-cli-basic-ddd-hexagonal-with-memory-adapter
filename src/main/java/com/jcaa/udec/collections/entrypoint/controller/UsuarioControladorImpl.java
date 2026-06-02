@@ -35,4 +35,8 @@ public class UsuarioControladorImpl implements UsuarioControlador {
         return UsuarioResponseMapper.mapearAResponse(obtenerUsuarioUseCase.obtenerPorId(consulta));
     }
 
+    @Override
+    public ObtenerUsuarioResponse obtenerTodos() {
+        return UsuarioResponseMapper.mapearAResponse(obtenerUsuarioUseCase.obtenerTodos());
+    }
 }
