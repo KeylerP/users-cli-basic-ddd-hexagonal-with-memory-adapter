@@ -7,9 +7,12 @@ public class Main {
   private static final String MENSAJE_INICIO_DOMAIN = "Capa de Dominio normalizada con DDD y SOLID";
   private static final String MENSAJE_INICIO_APPLICATION =
       "Capa de Aplicación normalizada con SOLID, DTO y Casos de uso";
+  private static final String MENSAJE_INICIO_ADAPTER =
+      "Capa de Adaptadores normalizada con arquitectura hexagonal";
 
   public static void main(String[] args) {
     log.info(MENSAJE_INICIO_DOMAIN);
     log.info(MENSAJE_INICIO_APPLICATION);
+    log.info(MENSAJE_INICIO_ADAPTER);
   }
 }
