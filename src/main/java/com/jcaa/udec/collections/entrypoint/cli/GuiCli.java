@@ -67,7 +67,7 @@ public class GuiCli {
             } catch (NumberFormatException exception) {
                 // El flujo informa el valor invalido y vuelve a mostrar el menu.
             }
-            System.out.println(MENSAJE_OPCION_INVALIDA.formatted(valorIngresado));
+            System.out.printf(MENSAJE_OPCION_INVALIDA + "%n", valorIngresado);
         } while (true);
     }
 

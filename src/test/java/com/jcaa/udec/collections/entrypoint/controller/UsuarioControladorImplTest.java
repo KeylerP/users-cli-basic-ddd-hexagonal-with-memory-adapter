@@ -9,6 +9,7 @@ import com.jcaa.udec.collections.application.service.ports.in.ObtenerUsuarioUseC
 import com.jcaa.udec.collections.domain.core.model.Usuario;
 import com.jcaa.udec.collections.entrypoint.controller.dto.request.RegistrarUsuarioPeticion;
 import com.jcaa.udec.collections.entrypoint.controller.dto.response.ObtenerUsuarioResponse;
+import com.jcaa.udec.collections.entrypoint.controller.dto.response.UsuarioResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ class UsuarioControladorImplTest {
         assertThat(response.estaVacia()).isFalse();
         assertThat(response.usuarios())
                 .singleElement()
-                .extracting(usuario -> usuario.id(), usuario -> usuario.nombre(), usuario -> usuario.email())
+                .extracting(UsuarioResponse::id, UsuarioResponse::nombre, UsuarioResponse::email)
                 .containsExactly(ID, NOMBRE, EMAIL);
     }
 
