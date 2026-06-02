@@ -1,18 +1,19 @@
 package com.jcaa.udec;
 
-import lombok.extern.slf4j.Slf4j;
+import com.jcaa.udec.collections.adapter.persistence.memory.GuardarUsuarioAdapter;
+import com.jcaa.udec.collections.application.service.AgregarUsuarioService;
+import com.jcaa.udec.collections.application.service.ports.in.AgregarUsuarioUseCase;
+import com.jcaa.udec.collections.domain.port.out.GuardarUsuarioPort;
+import com.jcaa.udec.collections.entrypoint.cli.GuiCli;
+import com.jcaa.udec.collections.entrypoint.controller.UsuarioControlador;
+import com.jcaa.udec.collections.entrypoint.controller.UsuarioControladorImpl;
 
-@Slf4j
 public class Main {
-  private static final String MENSAJE_INICIO_DOMAIN = "Capa de Dominio normalizada con DDD y SOLID";
-  private static final String MENSAJE_INICIO_APPLICATION =
-      "Capa de Aplicación normalizada con SOLID, DTO y Casos de uso";
-  private static final String MENSAJE_INICIO_ADAPTER =
-      "Capa de Adaptadores normalizada con arquitectura hexagonal";
-
-  public static void main(String[] args) {
-    log.info(MENSAJE_INICIO_DOMAIN);
-    log.info(MENSAJE_INICIO_APPLICATION);
-    log.info(MENSAJE_INICIO_ADAPTER);
-  }
+    public static void main(String[] args) {
+        GuardarUsuarioPort guardarUsuarioPort = new GuardarUsuarioAdapter();
+        AgregarUsuarioUseCase agregarUsuarioUseCase = new AgregarUsuarioService(guardarUsuarioPort);
+        UsuarioControlador usuarioControlador = new UsuarioControladorImpl(agregarUsuarioUseCase);
+        GuiCli guiCli = new GuiCli(usuarioControlador);
+        guiCli.ejecutarAccion();
+    }
 }
