@@ -50,7 +50,7 @@ public class GuiCli {
         this(usuarioControlador, new Scanner(System.in));
     }
 
-    GuiCli(UsuarioControlador usuarioControlador, Scanner entrada) {
+    public GuiCli(UsuarioControlador usuarioControlador, Scanner entrada) {
         this.usuarioControlador = usuarioControlador;
         this.entrada = entrada;
     }
