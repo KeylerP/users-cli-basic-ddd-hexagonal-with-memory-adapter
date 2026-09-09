@@ -7,4 +7,6 @@ public interface SoldadoControlador {
     void registrar(RegistrarSoldadoPeticion peticion);
 
     ObtenerSoldadoResponse obtenerPorId(String id);
+
+    ObtenerSoldadoResponse obtenerTodos();
 }
