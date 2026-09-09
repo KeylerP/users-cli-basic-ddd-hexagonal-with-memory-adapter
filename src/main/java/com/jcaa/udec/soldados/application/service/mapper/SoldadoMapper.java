@@ -1,5 +1,6 @@
 package com.jcaa.udec.soldados.application.service.mapper;
 
+import com.jcaa.udec.soldados.application.service.dto.command.ActualizarSoldadoComando;
 import com.jcaa.udec.soldados.application.service.dto.command.CrearSoldadoComando;
 import com.jcaa.udec.soldados.domain.core.model.Soldado;
 
@@ -8,6 +9,15 @@ public final class SoldadoMapper {
     }
 
     public static Soldado mapearASoldado(CrearSoldadoComando comando) {
+        return Soldado.builder()
+                .id(comando.id())
+                .nombreCompleto(comando.nombreCompleto())
+                .rango(comando.rango())
+                .componenteMilitar(comando.componenteMilitar())
+                .build();
+    }
+
+    public static Soldado mapearASoldado(ActualizarSoldadoComando comando) {
         return Soldado.builder()
                 .id(comando.id())
                 .nombreCompleto(comando.nombreCompleto())
