@@ -2,10 +2,12 @@ package com.jcaa.udec.soldados.entrypoint.controller;
 
 import com.jcaa.udec.soldados.application.service.dto.command.ActualizarSoldadoComando;
 import com.jcaa.udec.soldados.application.service.dto.command.CrearSoldadoComando;
+import com.jcaa.udec.soldados.application.service.dto.command.EliminarSoldadoComando;
 import com.jcaa.udec.soldados.application.service.dto.query.BuscarSoldadoConsulta;
 import com.jcaa.udec.soldados.application.service.ports.in.ActualizarSoldadoUseCase;
 import com.jcaa.udec.soldados.application.service.ports.in.BuscarSoldadoUseCase;
 import com.jcaa.udec.soldados.application.service.ports.in.CrearSoldadoUseCase;
+import com.jcaa.udec.soldados.application.service.ports.in.EliminarSoldadoUseCase;
 import com.jcaa.udec.soldados.application.service.ports.in.ListarSoldadosUseCase;
 import com.jcaa.udec.soldados.entrypoint.controller.dto.request.ActualizarSoldadoPeticion;
 import com.jcaa.udec.soldados.entrypoint.controller.dto.request.RegistrarSoldadoPeticion;
@@ -17,16 +19,19 @@ public class SoldadoControladorImpl implements SoldadoControlador {
     private final BuscarSoldadoUseCase buscarSoldadoUseCase;
     private final ListarSoldadosUseCase listarSoldadosUseCase;
     private final ActualizarSoldadoUseCase actualizarSoldadoUseCase;
+    private final EliminarSoldadoUseCase eliminarSoldadoUseCase;
 
     public SoldadoControladorImpl(
             CrearSoldadoUseCase crearSoldadoUseCase,
             BuscarSoldadoUseCase buscarSoldadoUseCase,
             ListarSoldadosUseCase listarSoldadosUseCase,
-            ActualizarSoldadoUseCase actualizarSoldadoUseCase) {
+            ActualizarSoldadoUseCase actualizarSoldadoUseCase,
+            EliminarSoldadoUseCase eliminarSoldadoUseCase) {
         this.crearSoldadoUseCase = crearSoldadoUseCase;
         this.buscarSoldadoUseCase = buscarSoldadoUseCase;
         this.listarSoldadosUseCase = listarSoldadosUseCase;
         this.actualizarSoldadoUseCase = actualizarSoldadoUseCase;
+        this.eliminarSoldadoUseCase = eliminarSoldadoUseCase;
     }
 
     @Override
@@ -58,5 +63,10 @@ public class SoldadoControladorImpl implements SoldadoControlador {
                 peticion.rango(),
                 peticion.componenteMilitar());
         actualizarSoldadoUseCase.actualizar(comando);
+    }
+
+    @Override
+    public void eliminar(String id) {
+        eliminarSoldadoUseCase.eliminar(new EliminarSoldadoComando(id));
     }
 }

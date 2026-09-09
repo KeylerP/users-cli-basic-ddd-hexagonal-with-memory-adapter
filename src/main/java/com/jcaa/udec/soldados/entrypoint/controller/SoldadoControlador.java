@@ -12,4 +12,6 @@ public interface SoldadoControlador {
     ObtenerSoldadoResponse obtenerTodos();
 
     void actualizar(ActualizarSoldadoPeticion peticion);
+
+    void eliminar(String id);
 }
