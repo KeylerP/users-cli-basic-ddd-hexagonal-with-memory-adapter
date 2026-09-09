@@ -4,6 +4,7 @@ import com.jcaa.udec.soldados.application.service.dto.command.CrearSoldadoComand
 import com.jcaa.udec.soldados.application.service.dto.query.BuscarSoldadoConsulta;
 import com.jcaa.udec.soldados.application.service.ports.in.BuscarSoldadoUseCase;
 import com.jcaa.udec.soldados.application.service.ports.in.CrearSoldadoUseCase;
+import com.jcaa.udec.soldados.application.service.ports.in.ListarSoldadosUseCase;
 import com.jcaa.udec.soldados.entrypoint.controller.dto.request.RegistrarSoldadoPeticion;
 import com.jcaa.udec.soldados.entrypoint.controller.dto.response.ObtenerSoldadoResponse;
 import com.jcaa.udec.soldados.entrypoint.controller.mapper.SoldadoResponseMapper;
@@ -11,12 +12,15 @@ import com.jcaa.udec.soldados.entrypoint.controller.mapper.SoldadoResponseMapper
 public class SoldadoControladorImpl implements SoldadoControlador {
     private final CrearSoldadoUseCase crearSoldadoUseCase;
     private final BuscarSoldadoUseCase buscarSoldadoUseCase;
+    private final ListarSoldadosUseCase listarSoldadosUseCase;
 
     public SoldadoControladorImpl(
             CrearSoldadoUseCase crearSoldadoUseCase,
-            BuscarSoldadoUseCase buscarSoldadoUseCase) {
+            BuscarSoldadoUseCase buscarSoldadoUseCase,
+            ListarSoldadosUseCase listarSoldadosUseCase) {
         this.crearSoldadoUseCase = crearSoldadoUseCase;
         this.buscarSoldadoUseCase = buscarSoldadoUseCase;
+        this.listarSoldadosUseCase = listarSoldadosUseCase;
     }
 
     @Override
@@ -33,5 +37,10 @@ public class SoldadoControladorImpl implements SoldadoControlador {
     public ObtenerSoldadoResponse obtenerPorId(String id) {
         BuscarSoldadoConsulta consulta = new BuscarSoldadoConsulta(id);
         return SoldadoResponseMapper.mapearAResponse(buscarSoldadoUseCase.buscarPorId(consulta));
+    }
+
+    @Override
+    public ObtenerSoldadoResponse obtenerTodos() {
+        return SoldadoResponseMapper.mapearAResponse(listarSoldadosUseCase.obtenerTodos());
     }
 }
